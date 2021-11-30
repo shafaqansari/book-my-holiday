@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation" xmlns:tracing="http://www.mulesoft.org/schema/mule/tracing"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tracing http://www.mulesoft.org/schema/mule/tracing/current/mule-tracing.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
+	<flow name="getFlights" doc:id="11bcc88e-50e2-40c9-a5ab-b54a4e205de6" >
+		<logger level="INFO" doc:name="Start" doc:id="9960accb-eefb-49ef-ac6b-ba77815bd43d" message="Started"/>
+		<db:select doc:name="Retrieve Indigo flights" doc:id="3411caf1-6f01-43fb-a177-b32ae2a0b2fe" config-ref="Database_Config">
+			<db:sql ><![CDATA[select * FROM FLIGHT
+WHERE source = :source AND 
+destination = :destination AND
+departure_date = :date]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+'source' : attributes.queryParams.origin as String,
+'destination' : attributes.queryParams.destination as String,
+'date' : attributes.queryParams.departure_date as String
+}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="b46b0673-19fd-4188-a188-ba8b61b294d2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map {
+	"Airline" : $.airline_name,
+	"From" : $.source,
+	"To": $.destination,
+	"Departure Date" : $.departure_date,
+	"Fare" : $.price,
+	"Empty Seats" : $.available_seats
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="0d772b54-a13e-450f-8132-b02413663b6b" message="Ended"/>
+	</flow>
+	<flow name="bookFlight" doc:id="3698fd53-a3f6-4f02-a153-c808e16354a9" >
+		<http:listener doc:name="Listener" doc:id="7a392f8a-2a8c-42a7-b5eb-b82d82e7d580" config-ref="book-my-holiday-httpListenerConfig" path="/test"/>
+		<set-variable value="#[payload.PassengerName]" doc:name="Storing passenger details" doc:id="28a88cc7-0c00-4a50-9660-8041f2cef563" variableName="passengerName"/>
+		<db:insert doc:name="Add booking details" doc:id="f4f1a039-07ca-4de5-aaa3-08db62d21361" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO FLIGHT_BOOKINGS
+VALUES (:passenger_name,:origin,:dest,:date,:passengers,:email)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{
+	'passenger_name': payload.PassengerName[0],
+	'origin':payload.Origin,
+	'dest':payload.Destination,
+	 'date':payload.DepartureDate,
+	 'passengers':payload.NoOfPassengers,
+	 'email':payload.Email
+}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="173000ac-0c1d-4315-b37e-21df7b7c84d2" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "Message": "Yayy! Flight Booked Successfully.",
+  "Passengers": [
+    vars.passengerName
+  ],
+  "BookingId": "6E12345"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="getHotels" doc:id="1b31e3bb-6d51-444b-92f3-9a77dd0073cb" >
+		<choice doc:name="Choice" doc:id="6f18c864-a864-44ca-9416-fe476704a244" >
+			<when expression="#[!isEmpty(attributes.queryParams.MaxPrice)]">
+				<db:select doc:name="Select" doc:id="8ec96bb7-faee-45f3-9831-c984252cf372" config-ref="Database_Config">
+					<db:sql><![CDATA[Select * from HOTEL where city= :city and price <= :MaxPrice]]></db:sql>
+					<db:input-parameters><![CDATA[#[{'city' : attributes.queryParams.city,"MaxPrice" : attributes.queryParams.MaxPrice}]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<when expression="#[!isEmpty(attributes.queryParams.rating)]">
+				<db:select doc:name="Select" doc:id="68f128da-a2e2-44ba-8a06-3a79c073d898" config-ref="Database_Config">
+					<db:sql ><![CDATA[Select * from HOTEL where city= :city and rating >= :rating]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{"rating" : attributes.queryParams.rating,'city' : attributes.queryParams.city }]]]></db:input-parameters>
+				</db:select>
+			</when>
+			<otherwise>
+				<db:select doc:name="Select" doc:id="69b29123-025e-4a5e-ad48-a5aebfa29a51" config-ref="Database_Config">
+					<db:sql><![CDATA[Select * from HOTEL where city= :city]]></db:sql>
+					<db:input-parameters><![CDATA[#[{'city' : attributes.queryParams.city}]]]></db:input-parameters>
+				</db:select>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="Transform Message" doc:id="dd7049ec-a0b3-496c-9eaa-323585f688dd" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="122f7008-4dc3-46ce-aedb-dd80264f7aed" message="Ended. Flight Booked Successfully!"/>
+	</flow>
+	<flow name="bookHotel" doc:id="756258dc-7eef-4774-be48-75e89e3aec64" >
+		<logger level="INFO" doc:name="Start" doc:id="e5a16176-d0d3-4b9c-a3e9-6df20fc6ff81" message="Started"/>
+		<db:insert doc:name="Insert" doc:id="eab69e33-ba5a-4188-b85a-b312e37275f3" config-ref="Database_Config">
+			<db:sql ><![CDATA[INSERT INTO HOTEL_BOOKINGS VALUES (:guestname,:city,:checkin,:checkout,:roomnumber,:numguests,:hotelname)]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{"guestname" : payload.GuestName, "city" : payload.City, "checkin" : payload.CheckIn, "checkout" : payload.CheckOut, "roomnumber": payload.Rooms , "numguests" : payload.Guests , "hotelname" : payload.HotelName}]]]></db:input-parameters>
+		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="2177a880-7f38-4707-bf87-5e48e9f33f77" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Message": "Hotel Booked! Enjoy your Stay"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="End" doc:id="c1efef71-a199-4d78-a676-6641fd9d87ee" message="Ended. Hotel Booked Successfully!"/>
+	</flow>
+</mule>
