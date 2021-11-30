@@ -1,0 +1,13 @@
+%dw 2.0
+
+type auto_756258dc_7eef_4774_be48_75e89e3aec64_Input_Payload = {
+  CheckOut: String, 
+  Guests: Number, 
+  CheckIn: String, 
+  HotelName: String, 
+  City: String, 
+  GuestName: String, 
+  Rooms: Number, 
+  _?: Any
+}
+

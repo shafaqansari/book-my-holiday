@@ -1,0 +1,12 @@
+%dw 2.0
+
+type auto_3698fd53_a3f6_4f02_a153_c808e16354a9_Input_Payload = {
+  Origin: String, 
+  NoOfPassengers: Number, 
+  Destination: String, 
+  Email: String, 
+  PassengerName: Array<Any>, 
+  DepartureDate: String, 
+  _?: Any
+}
+
