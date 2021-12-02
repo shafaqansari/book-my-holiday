@@ -7,7 +7,7 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>mule-application</packaging>
 
-	<name>sys-bookmyholiday-api</name>
+	<name>book-my-holiday</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -15,6 +15,7 @@
 
 		<app.runtime>4.4.0</app.runtime>
 		<mule.maven.plugin.version>3.5.2</mule.maven.plugin.version>
+		<munit.version>2.3.6</munit.version>
 	</properties>
 
 	<build>
@@ -36,24 +37,46 @@
 							<artifactId>mysql-connector-java</artifactId>
 						</sharedLibrary>
 					</sharedLibraries>
-					
 					<cloudHubDeployment>
-  						<uri>https://anypoint.mulesoft.com</uri>
- 						<muleVersion>${mule.version}</muleVersion>
-						 <username>${anypoint.username}</username>
-						 <password>${anypoint.password}</password>
-						 <environment>${env}</environment>
-						 <applicationName>${appname}</applicationName>
-						 <businessGroup>${business}</businessGroup>
-						 <workerType>${vCore}</workerType>
-						 <workers>${workers}</workers>
-						 <objectStoreV2>true</objectStoreV2>
+						<uri>https://anypoint.mulesoft.com</uri>
+						<muleVersion>${app.runtime}</muleVersion>
+						<username>${username}</username>
+						<password>${password}</password>
+						<applicationName>${applicationName}</applicationName>
+						<environment>${environment}</environment>
+						<region>${region}</region>
+						<workers>${workers}</workers>
+						<workerType>${workerType}</workerType>
+						<objectStoreV2>true</objectStoreV2>
+						<properties>
+							<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
+							<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
+						</properties>
 					</cloudHubDeployment>
-					
-					<properties>
-					<anypoint.platform.client_id>${anypoint.platform.client_id}</anypoint.platform.client_id>
-					<anypoint.platform.client_secret>${anypoint.platform.client_secret}</anypoint.platform.client_secret>
-					</properties>					
+					<classifier>mule-application</classifier>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.mulesoft.munit.tools</groupId>
+				<artifactId>munit-maven-plugin</artifactId>
+				<version>${munit.version}</version>
+				<executions>
+					<execution>
+						<id>test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>test</goal>
+							<goal>coverage-report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<coverage>
+						<runCoverage>true</runCoverage>
+						<formats>
+							<format>html</format>
+						</formats>
+					</coverage>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -107,6 +130,26 @@
 			<artifactId>mule-validation-module</artifactId>
 			<version>1.4.5</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-runner</artifactId>
+			<version>2.3.6</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mulesoft.munit</groupId>
+			<artifactId>munit-tools</artifactId>
+			<version>2.3.6</version>
+			<classifier>mule-plugin</classifier>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.weave</groupId>
+			<artifactId>assertions</artifactId>
+			<version>1.0.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

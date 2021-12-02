@@ -1,0 +1,7 @@
+db:
+  host: "sql6.freemysqlhosting.net"
+  database: "sql6455846"
+  user: "sql6455846"
+  password: "537Sr5rYVa"
+  port: "3306"
+  
