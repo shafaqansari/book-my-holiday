@@ -22,8 +22,11 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
+import * from dw::core::Strings
 ---
-{message: "Bad Request"}]]></ee:set-payload>
+{
+	message:  upper(error.description) as String	
+}]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
             </on-error-propagate>
