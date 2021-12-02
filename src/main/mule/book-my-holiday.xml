@@ -25,9 +25,7 @@ output application/json
 import * from dw::core::Strings
 ---
 {
-	message:  upper(error.description) as String,
-	error: substringAfter(error.description,'[')
-	
+	message:  upper(error.description) as String	
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
