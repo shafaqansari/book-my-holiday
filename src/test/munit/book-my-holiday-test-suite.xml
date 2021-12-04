@@ -8,24 +8,118 @@
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
 	<munit:config name="book-my-holiday-test-suite.xml" />
-	<munit:test name="book-my-holiday-test-suite-get:\flights:book-my-holiday-configTest" doc:id="d7edec67-f445-4b59-afde-20c35457e40e" description="Test">
+	<munit:test name="mainTest-badRequest" doc:id="6be18911-9fe9-4ef6-a5ff-1fb4e1582660" description="Test" expectedErrorType="APIKIT:BAD_REQUEST">
 		<munit:behavior >
-			<munit-tools:mock-when doc:name="Mock getFlights" doc:id="474bdb1e-744d-4404-a17f-1501b78fa049" processor="flow-ref">
+			<munit-tools:mock-when doc:name="Mock when- BAD_REQUEST" doc:id="19b118e9-c7b0-4522-8b2c-1d046cd16201" processor="apikit:router">
 				<munit-tools:with-attributes >
-					<munit-tools:with-attribute whereValue="Flow Reference" attributeName="doc:name" />
-					<munit-tools:with-attribute whereValue="834259f3-3d8e-4297-a362-a725c8ea7ed4" attributeName="doc:id" />
-					<munit-tools:with-attribute whereValue="getFlights" attributeName="name" />
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
 				</munit-tools:with-attributes>
 				<munit-tools:then-return >
-					<munit-tools:payload value="Flight details" />
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
 				</munit-tools:then-return>
 			</munit-tools:mock-when>
 		</munit:behavior>
 		<munit:execution >
-			<flow-ref doc:name="Flow-ref to get:\flights:book-my-holiday-config" doc:id="7576d3ac-a198-436c-8698-c42b9f2aa13e" name="get:\flights:book-my-holiday-config"/>
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="ab3ddd25-d680-4c35-9852-76bc9833c5e0" name="book-my-holiday-main"/>
 		</munit:execution>
 		<munit:validation >
-			<munit-tools:assert-equals doc:name="Assert equals" doc:id="54e140f2-6f0c-43f3-9cd1-ac7c32f81f1d" actual="#[payload]" expected="Flight details"/>
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="6224e0cf-e70a-4e9d-bc7f-75e4ddf04f6d" actual="#[vars.httpStatus]" expected="400"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTest-notFound" doc:id="c690a2f5-4cc0-4f4d-8202-197a98d9a4d3" description="Test" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="c239f740-4a18-4dab-ac30-60808f9447bc" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="a4d6a0a0-8d86-4aa2-8680-d473fbd28e75" name="book-my-holiday-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="0446721d-c63b-477a-b32f-783f8d3eba3d" actual="#[vars.httpStatus]" expected="404"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTest-methodNotAllowed" doc:id="65780b70-88bd-4da3-ab84-fce15e17ee28" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="08b8c326-f6cd-4d09-b3bb-9d7d7de65d3e" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="5b1b40ad-68a6-4479-beec-251c932e396a" name="book-my-holiday-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="2b6cdef7-7197-4da0-ad71-44e06444c2e3" actual="#[vars.httpStatus]" expected="405"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTest-notAcceptable" doc:id="67cd4721-ceed-4ad2-85a3-35faaa6bd0ed" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="8c2f39ad-7c21-4bd1-8464-d38bc166237b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="0266c2a2-b583-4f94-b04c-6905fa962f5a" name="book-my-holiday-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="833e2fa7-de01-4e28-8e79-5d753021b2f3" actual="#[vars.httpStatus]" expected="406"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTest-unsupportedMediaType" doc:id="1d01fef7-399f-4858-b6c2-d459d22fa6b5" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="1617656f-9a08-4fdb-83db-27c6c58089db" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="35f5cea3-ff3c-43be-ab8f-c6204231c3e5" name="book-my-holiday-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="575dd8dd-1688-41e2-9e3d-dba6b3285aef" actual="#[vars.httpStatus]" expected="415"/>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="mainTest-notImplemented" doc:id="9688e7ae-bf5a-4e7d-9a62-436b3b052166" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="02a36c89-8a16-4df3-b1db-6ed03b3aee21" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="book-my-holiday-config" attributeName="config-ref" />
+					<munit-tools:with-attribute whereValue="8a6f82e8-97b7-4579-898e-cd4383fc8839" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to book-my-holiday-main" doc:id="8edf3be7-0209-4d74-a951-9cacb45bae0f" name="book-my-holiday-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-equals doc:name="Assert equals" doc:id="3cd5c75f-a1ce-4147-b050-e36ac40a7ace" actual="#[vars.httpStatus]" expected="501"/>
 		</munit:validation>
 	</munit:test>
 
