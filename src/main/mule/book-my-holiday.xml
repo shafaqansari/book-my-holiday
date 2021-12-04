@@ -15,7 +15,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="book-my-holiday-config" />
+        <apikit:router config-ref="book-my-holiday-config" doc:id="8a6f82e8-97b7-4579-898e-cd4383fc8839"/>
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
 				<ee:transform doc:name="Transform Message" doc:id="e63f7400-bab7-47ac-a615-9eb7486af7fe" >
