@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="implementation-suite.xml" />
+	<munit:test name="getFlights-test" doc:id="e9239060-08b5-4755-9deb-524f1ed4d993" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="9f76ff6d-5c31-4dbe-9c1c-d4e60a4bf501" >
+				<munit:payload value="#[readUrl('classpath://getFlightstest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getFlightstest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getFlightstest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getFlights" doc:id="9ecf5eb0-a89c-49f5-bf91-1b84d7afa3b3" name="getFlights"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="f5070f23-a495-489e-ae7d-cd19f41715f8" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getFlightstest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getHotels-defaultTest" doc:id="67f9f7e0-6ecb-49bd-8093-d31c4c767e82" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Select" doc:id="e2c49e1a-a69c-4328-a8f0-7379901f5919" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="69b29123-025e-4a5e-ad48-a5aebfa29a51" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="fb75d121-7bac-4c21-82fc-c53356b93a75" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelsdefaultTest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="7b049365-1405-44db-8875-37a20fb753ea" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelsdefaultTest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="09b52aa9-3e6e-4a80-a1e0-e2f693f8b60e" >
+				<munit:payload value="#[readUrl('classpath://getHotelsdefaultTest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getHotelsdefaultTest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getHotelsdefaultTest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getHotels" doc:id="cb74764a-6537-4835-9c5c-b1b5d0c822a3" name="getHotels"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="7f14af44-fbb6-44ef-8af7-0d4c94cf8d84" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelsdefaultTest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Select" doc:id="730f5711-13a3-48ec-a0f5-b4816d334fd2" processor="db:select" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="69b29123-025e-4a5e-ad48-a5aebfa29a51" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getHotels-withMaxPriceTest" doc:id="9329b68b-986f-47f0-9261-6cc43eb5c0ac" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Select" doc:id="baa31564-77bb-42fb-8fde-d9f2cf498c19" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8ec96bb7-faee-45f3-9831-c984252cf372" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b05d6132-b73e-4e0a-8471-5a3a5532197a" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswithMaxPriceTest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="2b8d0e50-e534-4179-8696-46d2ad9e3d94" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswithMaxPriceTest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="91cc3884-e98f-4830-954e-3306bba76185" >
+				<munit:payload value="#[readUrl('classpath://getHotelswithMaxPriceTest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getHotelswithMaxPriceTest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getHotelswithMaxPriceTest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getHotels" doc:id="af43e05d-5ba1-4728-ae87-919573080560" name="getHotels"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="cec403d1-d7a2-4ce6-bb1e-740407944813" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswithMaxPriceTest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Select" doc:id="3f5c0bd2-ea03-40e5-a5ba-c365751878a9" processor="db:select" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8ec96bb7-faee-45f3-9831-c984252cf372" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="getHotels-witjRaingTest" doc:id="a4acb5ec-4722-49d5-bcc8-3f62cd439cbe" >
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy Select" doc:id="ad3ecb7d-f801-4d7b-b923-92e5b9554b10" processor="db:select">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="68f128da-a2e2-44ba-8a06-3a79c073d898" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b302c96c-fef6-49e4-93b8-b1475386c3e2" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswitjRaingTest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="ad5a4792-9d57-4324-bf27-9dc251330269" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswitjRaingTest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="b8dfa9c5-61b3-479f-86b5-7938feaaa770" >
+				<munit:payload value="#[readUrl('classpath://getHotelswitjRaingTest\set-event_payload.dwl')]" encoding="UTF-8" />
+				<munit:attributes value="#[readUrl('classpath://getHotelswitjRaingTest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://getHotelswitjRaingTest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to getHotels" doc:id="bf8fad85-14e0-4cbf-9d71-a1c0dced7476" name="getHotels"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="49906776-9142-4417-b0b0-ad6dc083cfc2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import getHotelswitjRaingTest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Select" doc:id="b3fb8042-35da-45ac-a192-8253668c1504" processor="db:select" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="68f128da-a2e2-44ba-8a06-3a79c073d898" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="bookFlight-test" doc:id="2c7ce192-e793-4448-809e-352d5a507afa">
+		<munit:behavior>
+			<munit:set-event doc:name="Set Input" doc:id="3a63f22a-225c-40cb-b101-a5a4cfbf9c6b">
+				<munit:payload value="#[output application/json --- readUrl('classpath://bookFlighttest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://bookFlighttest\set-event_attributes.dwl')]" />
+				<munit:variables>
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://bookFlighttest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution>
+			<flow-ref doc:name="Flow-ref to bookFlight" doc:id="b9ce37a4-36d8-430a-941d-ad13de46bc08" name="bookFlight" />
+		</munit:execution>
+		<munit:validation>
+			<munit-tools:assert doc:name="Assert payload" doc:id="7a851918-b210-4fb2-8074-4fa90687efbc" message="The payload does not match">
+				<munit-tools:that><![CDATA[#[%dw 2.0
+import bookFlighttest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="bookHotel-test" doc:id="a02d2a53-2ac8-4bdb-a45b-b3b47770bdfa" >
+		<munit:behavior >
+			<munit:set-event doc:name="Set Input" doc:id="4eaa3c00-c8b1-4a7d-a0fc-1fda370e26a4" >
+				<munit:payload value="#[output application/json --- readUrl('classpath://bookHoteltest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				<munit:attributes value="#[readUrl('classpath://bookHoteltest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://bookHoteltest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to bookHotel" doc:id="a9c9cab1-c118-451e-a97c-4961c086e4d8" name="bookHotel"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="178710b9-90dc-454e-acc4-ddbe93379112" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import bookHoteltest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
