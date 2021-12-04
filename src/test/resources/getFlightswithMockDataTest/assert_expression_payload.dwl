@@ -2,7 +2,7 @@
 import * from dw::test::Asserts
 ---
 payload must equalTo({
-  "Flights": [
+  "Available Flights": [
     {
       "Airline": "Indigo",
       "From": "Delhi",
