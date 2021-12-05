@@ -6,13 +6,13 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
     </http:listener-config>
     <apikit:config name="book-my-holiday-config" api="resource::33097a6d-c3a8-4b56-865b-aa6365b505db:book-my-holiday:1.0.0:raml:zip:book-my-holiday.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="book-my-holiday-main">
-        <http:listener config-ref="book-my-holiday-httpListenerConfig" path="/api/*">
+        <http:listener config-ref="book-my-holiday-httpListenerConfig" path="/api/*" allowedMethods="GET,POST">
             <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:response>
             <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
             </http:error-response>
         </http:listener>
         <apikit:router config-ref="book-my-holiday-config" doc:id="8a6f82e8-97b7-4579-898e-cd4383fc8839"/>
