@@ -2,26 +2,24 @@
 import * from dw::test::Asserts
 ---
 payload must equalTo({
-  "Available Hotels:": {
-    "Hotel Name": [
-      "Taj Palace",
-      "Vivanta Ta",
-      "Taj Suites"
-    ],
-    "Location": [
-      "Delhi",
-      "Delhi",
-      "Delhi"
-    ],
-    "Rating": [
-      5,
-      4,
-      3
-    ],
-    "Price": [
-      7500,
-      8500,
-      4500
-    ]
-  }
+  "Available Hotels:": [
+    {
+      "Hotel Name": "Taj Palace",
+      "Location": "Delhi",
+      "Rating": 5,
+      "Price": 7500
+    },
+    {
+      "Hotel Name": "Vivanta Ta",
+      "Location": "Delhi",
+      "Rating": 4,
+      "Price": 8500
+    },
+    {
+      "Hotel Name": "Taj Suites",
+      "Location": "Delhi",
+      "Rating": 3,
+      "Price": 4500
+    }
+  ]
 })

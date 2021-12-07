@@ -5,3 +5,9 @@ db:
   password: "537Sr5rYVa"
   port: "3306"
   
+secret:
+  key: "secure123!"
+  password : "![/nudAAaxWZAYL0C6DLq2UQ==]"
+
+http:
+  port: "8081"
