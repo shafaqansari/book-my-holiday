@@ -104,7 +104,7 @@ assert_expression_payload::main({payload: payload, attributes: attributes, vars:
 			</munit-tools:verify-call>
 		</munit:validation>
 	</munit:test>
-	<munit:test name="getHotels-withRaingTest" doc:id="a4acb5ec-4722-49d5-bcc8-3f62cd439cbe" >
+	<munit:test name="getHotels-withRatingTest" doc:id="a4acb5ec-4722-49d5-bcc8-3f62cd439cbe" >
 		<munit:behavior >
 			<munit-tools:spy doc:name="Spy Select" doc:id="ad3ecb7d-f801-4d7b-b923-92e5b9554b10" processor="db:select">
 				<munit-tools:with-attributes >

@@ -120,11 +120,11 @@ output application/json
 if(isEmpty(payload)){
 		"Message":"No hotel available for the current Search! Please try with different filters"
 	}else{
-		"Available Hotels:" : {
-			"Hotel Name" : payload.name,
-			"Location" : payload.city,
-			"Rating" : payload.ratings,
-			"Price" : payload.price
+		"Available Hotels:" : payload map {
+			"Hotel Name" : $.name,
+			"Location" : $.city,
+			"Rating" : $.ratings,
+			"Price" : $.price
 		}
 }]]></ee:set-payload>
 			</ee:message>
